@@ -43,3 +43,11 @@ sessionRoute.post("/session/create", (0, multer_1.default)().single("thumbnail")
         res.status(400).json({ success: false, message: `${error}` });
     }
 }));
+sessionRoute.get("/session/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+    }
+    catch (error) {
+        logger_util_1.logger.error(`Error in getting all sessions: ${error}`);
+        res.status(400).json({ success: false, message: `${error}` });
+    }
+}));
