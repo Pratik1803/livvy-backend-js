@@ -135,8 +135,10 @@ authRoute.post("/verification/otp", (req, res) => __awaiter(void 0, void 0, void
 authRoute.post("/email-recovery", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const secret = process.env.JWT_EMAIL_SECRET_KEY;
-        if (!req.body.email || !secret)
-            throw new Error("Email or user id or jwt_secret not found!");
+        if (!secret)
+            throw new Error("email secret not found!");
+        if (!req.body.email)
+            throw new Error("Email not found!");
         const encryptedUserEmail = jsonwebtoken_1.default.sign(req.body.email, secret);
         const recoveryEmailSent = yield (0, mailer_util_1.mailer)({
             userEmail: req.body.email,
