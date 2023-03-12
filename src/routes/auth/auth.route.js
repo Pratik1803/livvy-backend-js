@@ -134,14 +134,14 @@ authRoute.post("/verification/otp", (req, res) => __awaiter(void 0, void 0, void
 // To send recovery email
 authRoute.post("/email-recovery", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const secret = process.env.JWT_SECRET_KEY;
-        if (!req.body.email || !req.body.uid || !secret)
+        const secret = process.env.JWT_EMAIL_SECRET_KEY;
+        if (!req.body.email || !secret)
             throw new Error("Email or user id or jwt_secret not found!");
-        const encryptedUserId = jsonwebtoken_1.default.sign(req.body.email, secret);
+        const encryptedUserEmail = jsonwebtoken_1.default.sign(req.body.email, secret);
         const recoveryEmailSent = yield (0, mailer_util_1.mailer)({
             userEmail: req.body.email,
             action: "RECOVERY",
-            encryptedUserId,
+            encryptedUserEmail,
         });
         if (!recoveryEmailSent.success)
             throw new Error("Recovery Email not sent!");
@@ -161,8 +161,8 @@ authRoute.post("/email-recovery", (req, res) => __awaiter(void 0, void 0, void 0
 // To reset password of user
 authRoute.post("/reset-password", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (req.body._id || !req.body.email || !req.body.newPassword)
-            throw new Error("UserId, Email and NewPassword are required!");
+        if (!req.query.e || !req.body.newPassword)
+            throw new Error("Email and NewPassword are required!");
         const newHashedPassword = yield bcryptjs_1.default.hash(req.body.newPassword, 10);
         const result = yield user_model_1.User.findByIdAndUpdate(req.body._id, { password: newHashedPassword }, { new: true });
         res.status(200).json({

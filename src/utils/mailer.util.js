@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.mailer = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const logger_util_1 = require("./logger.util");
-function mailer({ userEmail, action, otp, encryptedUserId }) {
+function mailer({ userEmail, action, otp, encryptedUserEmail }) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             let transporter = nodemailer_1.default.createTransport({
@@ -34,7 +34,7 @@ function mailer({ userEmail, action, otp, encryptedUserId }) {
                     to: userEmail,
                     subject: "Reset password request...",
                     text: "Click the below link to reset your password.",
-                    html: `<a href='www.livvy.in/recovery/email?uid=${encryptedUserId}' target='__blank'>Click here to reset password</a>`, // TODO: Include encrypted userID of user in the redirection link.
+                    html: `<a href='www.livvy.in/recovery/email?Q=${encryptedUserEmail}' target='__blank'>Click here to reset password</a>`, // TODO: Include encrypted userID of user in the redirection link.
                 });
                 logger_util_1.logger.info(`Reset email sent to user ${userEmail}: ${info}`);
                 return {
