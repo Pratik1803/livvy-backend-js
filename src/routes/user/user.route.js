@@ -41,35 +41,8 @@ userRoute.get("/user/:_id", (req, res) => __awaiter(void 0, void 0, void 0, func
         res.status(400).json({ success: false, message: `${error}` });
     }
 }));
-// To create User
-// userRoute.post(
-// 	"/user/create",
-// 	multer().single("profileImg"),
-// 	async (req: Request<{}, {}, { user: IUser }, {}>, res) => {
-// 		try {
-// 			const user_aws_uid = v4();
-// 			let userData = req.body.user;
-// 			if (req.file) {
-// 				const url = await uploadImage(
-// 					`user/${user_aws_uid}/${req.file.fieldname}${path.extname(
-// 						req.file.originalname
-// 					)}`,
-// 					req.file.buffer
-// 				);
-// 				userData.profileImg = url as string;
-// 				userData.awsID = user_aws_uid;
-// 			}
-// 			const user = new User(userData);
-// 			const result = await user.save();
-// 			res.status(201).json({ success: true, data: result });
-// 		} catch (error) {
-// 			logger.error(`Error in creating user: ${error}`);
-// 			res.status(400).json({ success: false, message: `${error}` });
-// 		}
-// 	}
-// );
 // To update user details
-userRoute.patch("/user/update", (0, multer_1.default)().single("profileImg"), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+userRoute.post("/user/update", (0, multer_1.default)().single("profileImg"), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { updatedData, _id, aws_uid } = req.body;
         if (req.file) {
@@ -86,6 +59,46 @@ userRoute.patch("/user/update", (0, multer_1.default)().single("profileImg"), (r
     }
     catch (error) {
         logger_util_1.logger.error(`Error in updating user: ${error}`);
+        res.status(400).json({ success: false, message: `${error}` });
+    }
+}));
+// To follow a certain user/seller whose id is fid
+userRoute.post("/user/follow", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        if (!req.body.uid)
+            throw new Error("uid not found!");
+        const result = yield user_model_1.User.findByIdAndUpdate(req.body.uid, {
+            $push: { followingIds: req.body.fid },
+        }, { new: true });
+        if (!result)
+            throw new Error("Something went wrong!");
+        res.status(200).json({
+            success: true,
+            data: result,
+        });
+    }
+    catch (error) {
+        logger_util_1.logger.error(`Error in adding a user/seller in followings list: ${error}`);
+        res.status(400).json({ success: false, message: `${error}` });
+    }
+}));
+// To unfollow a certain user/seller whose id is fid
+userRoute.post("/user/unfollow", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        if (!req.body.uid || !req.body.fid)
+            throw new Error("uid/fid not found!");
+        const result = yield user_model_1.User.findByIdAndUpdate(req.body.uid, {
+            $pull: { followingIds: { $in: [req.body.fid] } },
+        }, { new: true });
+        if (!result)
+            throw new Error("Something went wrong!");
+        res.status(200).json({
+            success: true,
+            data: result,
+        });
+    }
+    catch (error) {
+        logger_util_1.logger.error(`Error in removing a user/seller in followings list: ${error}`);
         res.status(400).json({ success: false, message: `${error}` });
     }
 }));

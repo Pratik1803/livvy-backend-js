@@ -23,6 +23,42 @@ const path_1 = __importDefault(require("path"));
 const sessionRoute = express_1.default.Router();
 exports.sessionRoute = sessionRoute;
 sessionRoute.use(auth_middleware_1.authMiddleware);
+sessionRoute.get("/session/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield liveSession_model_1.LiveSession.find();
+        res.status(200).json({
+            success: true,
+            data: result,
+        });
+    }
+    catch (error) {
+        logger_util_1.logger.error(`Error in getting all sessions: ${error}`);
+        res.status(400).json({ success: false, message: `${error}` });
+    }
+}));
+// To get all the live sessions
+sessionRoute.get("/sesssion/live", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const result = yield liveSession_model_1.LiveSession.find({ active: true });
+        res.status(200).json({
+            success: true,
+            data: result,
+        });
+    }
+    catch (error) {
+        logger_util_1.logger.error(`Error in getting live sessions: ${error}`);
+        res.status(400).json({ success: false, message: `${error}` });
+    }
+}));
+// To get all upcoming sessions
+sessionRoute.get("/session/upcoming", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+    }
+    catch (error) {
+        logger_util_1.logger.error(`Error in getting upcoming sessions: ${error}`);
+        res.status(400).json({ success: false, message: `${error}` });
+    }
+}));
 // To create a session entry in database for every session that has been started.
 sessionRoute.post("/session/create", (0, multer_1.default)().single("thumbnail"), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const sessionData = Object.assign({}, req.body);
@@ -40,14 +76,6 @@ sessionRoute.post("/session/create", (0, multer_1.default)().single("thumbnail")
     }
     catch (error) {
         logger_util_1.logger.error(`Error in creating session entry: ${error}`);
-        res.status(400).json({ success: false, message: `${error}` });
-    }
-}));
-sessionRoute.get("/session/all", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-    }
-    catch (error) {
-        logger_util_1.logger.error(`Error in getting all sessions: ${error}`);
         res.status(400).json({ success: false, message: `${error}` });
     }
 }));
