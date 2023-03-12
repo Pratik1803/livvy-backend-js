@@ -34,7 +34,7 @@ function mailer({ userEmail, action, otp, encryptedUserId }) {
                     to: userEmail,
                     subject: "Reset password request...",
                     text: "Click the below link to reset your password.",
-                    html: "<b>Hello world?</b>", // TODO: Include encrypted userID of user in the redirection link.
+                    html: `<a href='www.livvy.in/recovery/email?uid=${encryptedUserId}' target='__blank'>Click here to reset password</a>`, // TODO: Include encrypted userID of user in the redirection link.
                 });
                 logger_util_1.logger.info(`Reset email sent to user ${userEmail}: ${info}`);
                 return {

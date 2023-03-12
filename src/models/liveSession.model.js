@@ -30,6 +30,12 @@ const lsSchema = new mongoose_1.default.Schema({
         required: true,
         trim: true,
     },
+    subTitle: {
+        type: String,
+        required: true,
+        default: "",
+        trim: true,
+    },
     thumbnail: {
         type: String,
         required: true,

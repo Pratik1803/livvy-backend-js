@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.authRoute = void 0;
 const express_1 = __importDefault(require("express"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const uuid_1 = require("uuid");
 const user_model_1 = require("../../models/user.model");
 const createRoom_util_1 = require("../../utils/createRoom.util");
@@ -133,12 +134,14 @@ authRoute.post("/verification/otp", (req, res) => __awaiter(void 0, void 0, void
 // To send recovery email
 authRoute.post("/email-recovery", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        if (!req.body.email)
-            throw new Error("Email not found!");
+        const secret = process.env.JWT_SECRET_KEY;
+        if (!req.body.email || !req.body.uid || !secret)
+            throw new Error("Email or user id or jwt_secret not found!");
+        const encryptedUserId = jsonwebtoken_1.default.sign(req.body.email, secret);
         const recoveryEmailSent = yield (0, mailer_util_1.mailer)({
             userEmail: req.body.email,
             action: "RECOVERY",
-            encryptedUserId: "",
+            encryptedUserId,
         });
         if (!recoveryEmailSent.success)
             throw new Error("Recovery Email not sent!");

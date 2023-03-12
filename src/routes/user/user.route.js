@@ -45,6 +45,8 @@ userRoute.get("/user/:_id", (req, res) => __awaiter(void 0, void 0, void 0, func
 userRoute.post("/user/update", (0, multer_1.default)().single("profileImg"), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { updatedData, _id, aws_uid } = req.body;
+        if (!_id || !aws_uid)
+            throw new Error("_id or aws_uid not found!");
         if (req.file) {
             const url = yield (0, aws_config_1.uploadImage)(`user/${aws_uid}/${req.file.fieldname}${path_1.default.extname(req.file.filename)}`, req.file.buffer);
             updatedData.profileImg = url;
