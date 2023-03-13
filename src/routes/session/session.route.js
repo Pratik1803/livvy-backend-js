@@ -79,3 +79,19 @@ sessionRoute.post("/session/create", (0, multer_1.default)().single("thumbnail")
         res.status(400).json({ success: false, message: `${error}` });
     }
 }));
+// To close a session
+sessionRoute.post("/session/close", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        if (req.body._id)
+            throw new Error("Session_id not found!");
+        const result = yield liveSession_model_1.LiveSession.findByIdAndUpdate(req.body._id, { active: false }, { new: true });
+        res.status(200).json({
+            success: true,
+            data: result,
+        });
+    }
+    catch (error) {
+        logger_util_1.logger.error(`Error in closing a session: ${error}`);
+        res.status(400).json({ success: false, message: `${error}` });
+    }
+}));
